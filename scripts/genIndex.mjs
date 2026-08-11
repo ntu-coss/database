@@ -19,7 +19,8 @@
 import fs from 'fs';
 import path from 'path';
 
-const API_KEY = process.env.DRIVE_API_KEY;
+// trim：secret 常在複製貼上時帶到換行或空白，Google 會回 400 API key not valid
+const API_KEY = (process.env.DRIVE_API_KEY || '').trim();
 if (!API_KEY) {
     console.error('Error: DRIVE_API_KEY environment variable is not set. Aborting.');
     process.exit(1);

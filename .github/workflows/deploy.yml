@@ -27,8 +27,8 @@ jobs:
       # 在 step 的 if 判斷用得到（secrets context 在 if 裡不可靠）
       DRIVE_API_KEY: ${{ secrets.DRIVE_API_KEY }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
           cache: npm
