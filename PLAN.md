@@ -84,12 +84,15 @@ Drive 資料夾 ID 與各系上傳表單連結**一律在後台填**，程式碼
 
 ## 落地順序（進度勾選以本表為準）
 
-- [ ] **P0** repo 骨架：複製 db-test → basePath `/database`、改站名、系所清單先寫死在 `depts.json`
-- [ ] **P1** genIndex 多系所化 ＋ navbar 系所切換 ＋ 搜尋索引帶系所
-- [ ] **P2** Worker：`DBDepts`/`DBPosts` 兩張表、`/api/db/config`、`/api/db/announcements`、後台 actions
-- [ ] **P3** 後台 UI 分頁（系所清單 ＋ 公告 CRUD）
-- [ ] **P4** 「立即重建」按鈕（GitHub PAT → Worker secret → repository_dispatch）
-- [ ] **P5** 前台公告改成即時 fetch，移除手寫 `posts/*.md`
+- [x] **P0** repo 骨架：複製 db-test → basePath `/database`、改站名、系所清單先寫死在 `depts.json`
+- [x] **P1** genIndex 多系所化 ＋ navbar 系所切換 ＋ 搜尋索引帶系所
+      （已本地 build 驗證；**genIndex 尚未對真實 Drive 跑過**，等 Morgan 用
+      `DRIVE_API_KEY=… npm run index` 實測）
+- [x] **P2** Worker：`DBDepts`/`DBPosts` 兩張表、`/api/db/config`、`/api/db/announcements`、後台 actions（已上測試區）
+- [x] **P3** 後台 UI 分頁（系所清單 ＋ 公告 CRUD）（已上測試區）
+- [x] **P4** 「立即重建」按鈕（程式碼完成；正式站要先 `wrangler secret put GITHUB_DISPATCH_TOKEN`，
+      測試區 `GITHUB_DISPATCH_REPO` 留空＝按鈕不會真的觸發）
+- [x] **P5** 前台公告改成即時 fetch，移除手寫 `posts/*.md`（前台已完成，等 P2 後端上線才看得到內容）
 - [ ] **P6** 上線：Pages 設定、README、SEO（title/description/sitemap）、
       官網 navbar 加「資料庫」連結（改 `ntu-coss-web`，走 staging-first ＋ 雙 repo push）
 
