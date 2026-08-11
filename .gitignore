@@ -1,0 +1,13 @@
+node_modules/
+.next/
+out/
+
+# 建置產物：由 scripts/genIndex.mjs 在 CI 產生，不進 repo
+folders/
+curriculums/
+depts.resolved.json
+public/depts.json
+public/search-index.json
+
+.DS_Store
+*.log

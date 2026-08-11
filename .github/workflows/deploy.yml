@@ -1,0 +1,55 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  # 後台「立即重建」按鈕（Worker 以 GITHUB_DISPATCH_TOKEN 呼叫 GitHub API）
+  repository_dispatch:
+    types: [rebuild]
+  schedule:
+    # 每天 19:00 UTC = 03:00 Asia/Taipei
+    - cron: '0 19 * * *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: echo "BASE_PATH=/${GITHUB_REPOSITORY#*/}" >> "$GITHUB_ENV"
+      # 系所清單向後台索取，再逐系遞迴走訪各系 Drive 資料夾
+      - run: node scripts/genIndex.mjs
+        env:
+          DRIVE_API_KEY: ${{ secrets.DRIVE_API_KEY }}
+          API_BASE: ${{ vars.API_BASE }}
+      - run: npm run build
+        env:
+          API_BASE: ${{ vars.API_BASE }}
+          NEXT_PUBLIC_GA_ID: ${{ vars.GA_ID }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
