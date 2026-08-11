@@ -93,8 +93,12 @@ Drive 資料夾 ID 與各系上傳表單連結**一律在後台填**，程式碼
 - [x] **P4** 「立即重建」按鈕（程式碼完成；正式站要先 `wrangler secret put GITHUB_DISPATCH_TOKEN`，
       測試區 `GITHUB_DISPATCH_REPO` 留空＝按鈕不會真的觸發）
 - [x] **P5** 前台公告改成即時 fetch，移除手寫 `posts/*.md`（前台已完成，等 P2 後端上線才看得到內容）
-- [ ] **P6** 上線：Pages 設定、README、SEO（title/description/sitemap）、
-      官網 navbar 加「資料庫」連結（改 `ntu-coss-web`，走 staging-first ＋ 雙 repo push）
+- [x] **P6a** repo `ntu-coss/database` 已建（public）、Pages 來源＝GitHub Actions、
+      首次部署綠燈 → `https://ntu-coss.github.io/database/`（**尚無課程資料**，
+      因為還沒設 `DRIVE_API_KEY`，workflow 會自動略過索引步驟）
+- [ ] **P6b** 設 `DRIVE_API_KEY` secret 後重跑 workflow，經濟系資料才會出現
+- [ ] **P6c** 官網 navbar 加「資料庫」連結（等有資料再加，免得連過去是空的）
+- [ ] **P6d** SEO：sitemap、favicon 換成社科院的（目前沿用經濟資料庫的 favicon）
 
 P0–P1 做完就能看到成品（系所清單先寫死）；P2 之後才需要動到官網後端。
 
