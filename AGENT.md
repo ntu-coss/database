@@ -48,6 +48,10 @@
 - GitHub PAT 存 **Worker secret** `GITHUB_DISPATCH_TOKEN`，不存 Google Sheet。
 - 系所 code：`econ` 經濟學系、`ps` 政治學系、`soc` 社會學系、`sw` 社會工作學系。
   資料夾 ID 與上傳表單連結**只在後台填**，不寫死在程式碼。
+- **系所清單沒有本地 fallback**：後台連不上或清單為空時 `genIndex` 直接失敗，
+  讓線上站維持上一版。不要為了「讓 build 過」再加預設清單回來。
+- 選系所在**課程頁的 pills**，navbar 不放系所選單；上傳鈕跟著目前看的系，
+  也在課程頁。
 - 品牌：`<title>`/footer 用「台大社科院資料庫 | NTU COSS Database」，
   navbar brand 用「臺大社科資料庫」。
 - 「檔案上傳」鈕改成 **per-dept**：`DBDepts.uploadUrl` 有值才顯示，指向該系表單；

@@ -6,7 +6,6 @@ out/
 folders/
 curriculums/
 depts.resolved.json
-public/depts.json
 public/search-index.json
 
 .DS_Store

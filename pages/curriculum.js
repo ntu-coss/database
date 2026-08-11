@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import Layout from '../components/layout';
 import { getSortedPostsData } from '../lib/curriculum';
 import { getPublicDepts } from '../lib/depts';
-import { rememberDept, resolveDept } from '../lib/useDepts';
+import { rememberDept, resolveDept } from '../lib/deptSelection';
 
 export async function getStaticProps() {
     return {
@@ -55,9 +55,19 @@ export default function Curriculum({ depts, courses }) {
                             </li>
                         ))}
                     </ul>
+                    {/* 上傳表單各系一份，後台沒填就不顯示 */}
+                    {currentDept && currentDept.uploadUrl && (
+                        <p className="text-center">
+                            <a className="btn btn-outline-success btn-sm" href={currentDept.uploadUrl} target="_blank" rel="noreferrer">
+                                上傳{currentDept.name}檔案
+                            </a>
+                        </p>
+                    )}
                 </div>
                 <div className="container">
-                    {list.length === 0 ? (
+                    {depts.length === 0 ? (
+                        <p className="text-muted text-center py-4">尚未設定任何系所。</p>
+                    ) : list.length === 0 ? (
                         <p className="text-muted text-center py-4">
                             {currentDept ? `${currentDept.name}尚未開放，請稍候。` : '尚未設定任何系所。'}
                         </p>

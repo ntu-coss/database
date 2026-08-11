@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { applyTheme, getInitialTheme } from './layout';
-import { useDepts } from '../lib/useDepts';
 
 const SEARCH_RESULT_LIMIT = 50;
 
@@ -24,14 +23,6 @@ function MoonIcon() {
 
 export default function Navbar() {
     const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
-    const { depts, dept, setDept } = useDepts();
-    const current = depts.find((d) => d.code === dept) || null;
-
-    // 切系＝整頁換到該系的課程列表（本站全站都用一般連結，不做 client routing）。
-    const switchDept = (code) => {
-        setDept(code);
-        window.location.href = `${basePath}/curriculum?dept=${encodeURIComponent(code)}`;
-    };
 
     // Default matches the server-rendered markup exactly; corrected client-side
     // after mount so there is no hydration mismatch.
@@ -124,31 +115,9 @@ export default function Navbar() {
                     </button>
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav me-auto mb-2 mb-xl-0">
-                            <li className="nav-item dropdown">
-                                <button
-                                    className="nav-link dropdown-toggle text-nowrap"
-                                    data-bs-toggle="dropdown"
-                                    aria-expanded="false"
-                                    disabled={depts.length === 0}
-                                >
-                                    {current ? current.name : '各系課程'}
-                                </button>
-                                <ul className="dropdown-menu">
-                                    {depts.map((d) => (
-                                        <li key={d.code}>
-                                            <button
-                                                className={`dropdown-item${d.code === dept ? ' active' : ''}`}
-                                                onClick={() => switchDept(d.code)}
-                                            >
-                                                {d.name}
-                                            </button>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </li>
                             <li className="nav-item">
                                 <a className="nav-link active text-nowrap" aria-current="page" href={`${basePath}/curriculum`}>
-                                    全部課程
+                                    課程
                                 </a>
                             </li>
                             <li className="nav-item">
@@ -201,17 +170,7 @@ export default function Navbar() {
                                 </div>
                             )}
                         </div>
-                        {/* 上傳表單各系一份，由後台設定；沒設就不顯示這顆鈕。 */}
-                        {current && current.uploadUrl && (
-                            <a
-                                className="btn btn-outline-success mb-2 mb-xl-0 text-nowrap"
-                                href={current.uploadUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                上傳{current.name}檔案
-                            </a>
-                        )}
+                        {/* 上傳鈕跟著「目前看的是哪個系」，所以放在課程頁的系所切換旁邊 */}
                         <div className="d-flex align-items-center ms-xl-2">
                             <span className="d-xl-none text-muted small me-2">深色模式</span>
                             <div className="form-check form-switch d-flex align-items-center mb-0">

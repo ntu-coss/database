@@ -2,7 +2,7 @@
   "name": "ntu-coss-database",
   "private": true,
   "scripts": {
-    "prebuild": "node scripts/genPublicDepts.mjs && node scripts/genSearchIndex.mjs",
+    "prebuild": "node scripts/genSearchIndex.mjs",
     "build": "next build",
     "dev": "next dev",
     "start": "next start",

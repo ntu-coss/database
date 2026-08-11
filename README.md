@@ -15,7 +15,7 @@ GitHub Actions（每日 03:00 台北時間 / push / 後台「立即重建」）
       ├─ 逐系遞迴走訪 Drive，產出 folders/<系>__<課程碼>.json
       │                          curriculums/<系>__<課程碼>.md
       └─ 寫出 depts.resolved.json
-  npm run build（prebuild 產生 public/depts.json 與 public/search-index.json）
+  npm run build（prebuild 產生 public/search-index.json）
       ▼
   out/ → GitHub Pages
 ```
@@ -32,11 +32,12 @@ DRIVE_API_KEY=… npm run index   # 抓 Drive 產生索引（金鑰請用環境�
 npm run build
 ```
 
-`folders/`、`curriculums/`、`depts.resolved.json`、`public/depts.json`、
-`public/search-index.json` 都是建置產物，已 gitignore。
+`folders/`、`curriculums/`、`depts.resolved.json`、`public/search-index.json`
+都是建置產物，已 gitignore。
 
-`depts.json` 是後台無法連線時的系所清單 fallback；正式的系所名稱、Drive 資料夾
-與上傳表單連結一律在社科院學生會官網後台的「社科院資料庫」分頁維護。
+系所名稱、Drive 資料夾與上傳表單連結**只有一個來源**：社科院學生會官網後台的
+「社科院資料庫」分頁。程式碼裡沒有任何預設系所清單——後台連不上時 `genIndex`
+會直接失敗，讓線上站維持上一個成功版本，而不是用一份猜的清單蓋掉它。
 
 ## 環境變數
 

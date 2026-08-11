@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Layout from '../components/layout';
 import { getPublicDepts } from '../lib/depts';
-import { rememberDept } from '../lib/useDepts';
+import { rememberDept } from '../lib/deptSelection';
 
 export async function getStaticProps() {
   return { props: { depts: getPublicDepts() } };
@@ -49,6 +49,9 @@ export default function Home({ depts }) {
 
         <div className="container mb-5">
           <div className="row g-3">
+            {depts.length === 0 && (
+              <p className="text-muted text-center">尚未設定任何系所。</p>
+            )}
             {depts.map((d) => (
               <div className="col-12 col-sm-6 col-lg-3" key={d.code}>
                 <a

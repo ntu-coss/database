@@ -6,9 +6,8 @@
 // per-course output format the economics database has always produced.
 //
 // The department list (name + Drive folder id) comes from the SA website
-// backend (Worker /api/db/config); when that is unreachable it falls back to
-// the repo's depts.json. The resolved list is written to depts.resolved.json
-// for the Next.js build to read.
+// backend (Worker /api/db/config) and nowhere else; the resolved list is
+// written to depts.resolved.json for the Next.js build to read.
 //
 // Usage: DRIVE_API_KEY=xxxx node scripts/genIndex.mjs
 //
@@ -42,7 +41,6 @@ const MAX_CONCURRENCY = 5;
 const ROOT_DIR = process.cwd();
 const FOLDERS_DIR = path.join(ROOT_DIR, 'folders');
 const CURRICULUMS_DIR = path.join(ROOT_DIR, 'curriculums');
-const DEPTS_FALLBACK = path.join(ROOT_DIR, 'depts.json');
 const DEPTS_RESOLVED = path.join(ROOT_DIR, 'depts.resolved.json');
 
 // ---- tiny concurrency limiter -------------------------------------------
@@ -213,20 +211,26 @@ function normalizeDepts(list) {
         .sort((a, b) => a.order - b.order);
 }
 
-// 後台優先，失敗則退回 repo 內的 depts.json（讓後端掛掉時建置仍會成功）。
+// 系所清單只有一個來源：學生會官網後台。刻意不做本地 fallback——後端暫時不通時
+// 寧可讓建置失敗、保留上一次成功部署的網站，也不要用一份猜的清單把線上站蓋掉。
 async function loadDepts() {
+    let data;
     try {
         const res = await fetch(`${API_BASE}/api/db/config`);
         if (!res.ok) throw new Error(`status ${res.status}`);
-        const data = await res.json();
-        const depts = normalizeDepts(data && data.depts);
-        if (depts.length === 0) throw new Error('backend returned an empty department list');
-        console.log(`Department list: ${depts.length} from backend (${API_BASE}).`);
-        return depts;
+        data = await res.json();
     } catch (err) {
-        console.log(`Department list: backend unavailable (${err.message}), falling back to depts.json.`);
-        return normalizeDepts(JSON.parse(fs.readFileSync(DEPTS_FALLBACK, 'utf8')));
+        throw new Error(
+            `無法向後台取得系所清單（${API_BASE}/api/db/config）：${err.message}。` +
+            ' 建置中止，線上站維持上一版。'
+        );
     }
+    const depts = normalizeDepts(data && data.depts);
+    if (depts.length === 0) {
+        throw new Error('後台的系所清單是空的：請先到後台「社科院資料庫」分頁新增系所並啟用。');
+    }
+    console.log(`Department list: ${depts.length} from backend (${API_BASE}).`);
+    return depts;
 }
 
 function resetDir(dir, ext) {
