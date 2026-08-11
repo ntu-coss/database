@@ -23,6 +23,9 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # 在 step 的 if 判斷用得到（secrets context 在 if 裡不可靠）
+      DRIVE_API_KEY: ${{ secrets.DRIVE_API_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,11 +34,16 @@ jobs:
           cache: npm
       - run: npm ci
       - run: echo "BASE_PATH=/${GITHUB_REPOSITORY#*/}" >> "$GITHUB_ENV"
-      # 系所清單向後台索取，再逐系遞迴走訪各系 Drive 資料夾
-      - run: node scripts/genIndex.mjs
+      # 系所清單向後台索取，再逐系遞迴走訪各系 Drive 資料夾。
+      # 還沒設 DRIVE_API_KEY 時整步跳過：網站照樣上線，只是沒有課程資料。
+      - name: Build Drive index
+        if: env.DRIVE_API_KEY != ''
+        run: node scripts/genIndex.mjs
         env:
-          DRIVE_API_KEY: ${{ secrets.DRIVE_API_KEY }}
           API_BASE: ${{ vars.API_BASE }}
+      - name: Skip Drive index
+        if: env.DRIVE_API_KEY == ''
+        run: echo "::warning::DRIVE_API_KEY 未設定，略過 Drive 索引，本次部署不含課程資料。"
       - run: npm run build
         env:
           API_BASE: ${{ vars.API_BASE }}

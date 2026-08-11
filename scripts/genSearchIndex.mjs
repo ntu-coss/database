@@ -9,8 +9,8 @@
 //
 // Output entry shape: { n: <fileName>, i: <fileId>, r: <系名 › parent folder route> }
 //
-// Missing/empty folders/ is fatal in CI (it means genIndex failed) but only a
-// warning locally, so `npm run build` works before anyone has a Drive API key.
+// 沒有 folders/ 就寫一份空索引而不是中斷：CI 那邊 genIndex 自己失敗就會讓
+// workflow 紅燈，這裡再擋一次只會讓「還沒設 API key」的首次部署無法上線。
 
 import fs from 'fs';
 import path from 'path';
@@ -18,14 +18,9 @@ import path from 'path';
 const ROOT_DIR = process.cwd();
 const FOLDERS_DIR = path.join(ROOT_DIR, 'folders');
 const OUTPUT_PATH = path.join(ROOT_DIR, 'public', 'search-index.json');
-const IN_CI = !!process.env.CI;
 
 function writeEmpty(reason) {
-    if (IN_CI) {
-        console.error(`Error: ${reason} Run scripts/genIndex.mjs first.`);
-        process.exit(1);
-    }
-    console.warn(`Warning: ${reason} Writing an empty search index (local build).`);
+    console.warn(`Warning: ${reason} Writing an empty search index.`);
     fs.mkdirSync(path.dirname(OUTPUT_PATH), { recursive: true });
     fs.writeFileSync(OUTPUT_PATH, '[]', 'utf8');
     process.exit(0);
