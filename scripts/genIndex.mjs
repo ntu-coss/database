@@ -25,6 +25,15 @@ if (!API_KEY) {
     console.error('Error: DRIVE_API_KEY environment variable is not set. Aborting.');
     process.exit(1);
 }
+// Google API key 是 AIza 開頭的 39 字元。形狀不對就先講清楚，免得只看到
+// Drive 回的「API key not valid」還要猜是貼錯字串還是權限問題。
+// 只印長度與是否符合格式，不印金鑰本身。
+if (!/^AIza[\w-]{35}$/.test(API_KEY)) {
+    console.warn(
+        `Warning: DRIVE_API_KEY 的長度是 ${API_KEY.length}（預期 39）且格式不像 Google API key。` +
+        ' 常見原因：複製到憑證頁面的「金鑰 ID」而不是金鑰本身。'
+    );
+}
 
 const API_BASE = process.env.API_BASE || 'https://ntu-coss-api.ntusssa2.workers.dev';
 const FOLDER_MIME = 'application/vnd.google-apps.folder';
