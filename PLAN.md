@@ -102,6 +102,26 @@ Drive 資料夾 ID 與各系上傳表單連結**一律在後台填**，程式碼
 
 P0–P1 做完就能看到成品（系所清單先寫死）；P2 之後才需要動到官網後端。
 
+## 與經濟資料庫（db-test）的關係 — 2026-08-12 決議
+
+本專案是 `ntu-econ/db-test` 的 **fork**，兩邊約 950 行近乎相同的程式碼
+（`components/`、`lib/`、`pages/file.js`、`pages/folder/`、`scripts/`），
+分家當天差異已有 10–40%：
+
+| 檔案 | 行數 | 與 db-test 的差異 |
+|---|---|---|
+| scripts/genIndex.mjs | 323 | 118（多系所化、改吃後台設定） |
+| components/navbar.js | 201 | 28（品牌、移除系所選單） |
+| pages/folder/[cid]/[fid].js | 110 | 22（系所麵包屑） |
+| scripts/genSearchIndex.mjs | 93 | 49（系所標記、容錯） |
+| components/layout.js | 68 | 13（品牌、GA env） |
+| lib/curriculum.js | 69 | 13（缺索引時不爆） |
+
+評估過三條路：**A** 併掉經濟資料庫、**B** 一份程式碼兩個部署（經濟 repo 的
+workflow 去 checkout 本 repo，用 env 換品牌與單系模式）、**C** 接受漂移。
+**Morgan 選 C**：改動頻率低、量不大，先各自演化，需要時再手動同步。
+未來若覺得同步變痛，B 是成本最低的收斂方式，別直接跳 A（涉及系學會自治與 SEO）。
+
 ## 未決事項
 
 1. 各系是否願意把 Drive 資料夾設為公開（唯一對外前置條件，需逐系交涉）。

@@ -38,6 +38,10 @@
 
 ## 已定案的設計決定（不要再重新討論）
 
+- 本 repo 是 `ntu-econ/db-test` 的 **fork**，兩邊約 950 行雷同。2026-08-12 決議
+  **接受漂移、不做共用套件／monorepo**（細節與量化見 PLAN.md）。改到共用部分時
+  不必同步回 db-test，也不要主動提議合併。
+
 - Drive 讀取＝**公開資料夾 ＋ Drive API key**（repo secret `DRIVE_API_KEY`），
   不走服務帳號。
 - 公告＝**前台即時 fetch Worker**；系所設定＝**build 時讀取**，改動後由後台
