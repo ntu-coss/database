@@ -86,19 +86,19 @@ Drive 資料夾 ID 與各系上傳表單連結**一律在後台填**，程式碼
 
 - [x] **P0** repo 骨架：複製 db-test → basePath `/database`、改站名、系所清單先寫死在 `depts.json`
 - [x] **P1** genIndex 多系所化 ＋ navbar 系所切換 ＋ 搜尋索引帶系所
-      （已本地 build 驗證；**genIndex 尚未對真實 Drive 跑過**，等 Morgan 用
-      `DRIVE_API_KEY=… npm run index` 實測）
+      （已本地 build 驗證；正式 Actions 的真實 Drive 索引步驟持續成功）
 - [x] **P2** Worker：`DBDepts`/`DBPosts` 兩張表、`/api/db/config`、`/api/db/announcements`、後台 actions（已上測試區）
 - [x] **P3** 後台 UI 分頁（系所清單 ＋ 公告 CRUD）（已上測試區）
-- [x] **P4** 「立即重建」按鈕（程式碼完成；正式站要先 `wrangler secret put GITHUB_DISPATCH_TOKEN`，
-      測試區 `GITHUB_DISPATCH_REPO` 留空＝按鈕不會真的觸發）
+- [x] **P4** 「立即重建」按鈕（正式 `repository_dispatch` 已成功執行；測試區
+      `GITHUB_DISPATCH_REPO` 留空＝按鈕不會真的觸發）
 - [x] **P5** 前台公告改成即時 fetch，移除手寫 `posts/*.md`（前台已完成，等 P2 後端上線才看得到內容）
 - [x] **P6a** repo `ntu-coss/database` 已建（public）、Pages 來源＝GitHub Actions、
-      首次部署綠燈 → `https://ntu-coss.github.io/database/`（**尚無課程資料**，
-      因為還沒設 `DRIVE_API_KEY`，workflow 會自動略過索引步驟）
-- [ ] **P6b** 設 `DRIVE_API_KEY` secret 後重跑 workflow，經濟系資料才會出現
-- [ ] **P6c** 官網 navbar 加「資料庫」連結（等有資料再加，免得連過去是空的）
-- [ ] **P6d** SEO：sitemap、favicon 換成社科院的（目前沿用經濟資料庫的 favicon）
+      首次部署綠燈 → `https://ntu-coss.github.io/database/`；workflow 已改為缺
+      `DRIVE_API_KEY` 就 fail-closed，避免以空索引覆蓋上一個成功版本
+- [x] **P6b** `DRIVE_API_KEY` 已設定；2026-08-20 核對最近五次 workflow 全綠，
+      `Build Drive index` 確實執行，正式站已有經濟學系資料
+- [x] **P6c** 官網 navbar 加「資料庫」連結（2026-08-20 程式完成，隨官網下一次部署上線）
+- [x] **P6d** SEO：動態 sitemap、robots、canonical／OG／JSON-LD、社科院 favicon 與 1200×630 分享圖
 
 P0–P1 做完就能看到成品（系所清單先寫死）；P2 之後才需要動到官網後端。
 

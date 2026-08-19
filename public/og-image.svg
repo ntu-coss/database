@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1d3557"/>
+      <stop offset="1" stop-color="#315f72"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <path d="M0 520 C250 430 370 650 650 535 C890 435 1010 520 1200 430 L1200 630 L0 630 Z" fill="#2a9d8f" opacity="0.48"/>
+  <rect x="78" y="78" width="1044" height="474" rx="30" fill="none" stroke="#8ecae6" stroke-width="3" opacity="0.72"/>
+  <text x="120" y="252" fill="#ffffff" font-family="Noto Sans CJK TC, sans-serif" font-size="86" font-weight="700">台大社科院資料庫</text>
+  <text x="124" y="342" fill="#dceaf5" font-family="Noto Sans, sans-serif" font-size="48">NTU COSS Database</text>
+  <text x="126" y="455" fill="#bde0d6" font-family="Noto Sans CJK TC, sans-serif" font-size="31">整合社會科學院各系考古題、講義與課程資源</text>
+</svg>

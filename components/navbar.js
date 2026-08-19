@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import Script from 'next/script';
 import { applyTheme, getInitialTheme } from './layout';
 
 const SEARCH_RESULT_LIMIT = 50;
@@ -101,7 +102,10 @@ export default function Navbar() {
                     <a className="navbar-brand" href={`${basePath}`}>
                         臺大社科資料庫
                     </a>
-                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+                    <Script
+                        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+                        strategy="afterInteractive"
+                    />
                     <button
                         className="navbar-toggler"
                         type="button"

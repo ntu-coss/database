@@ -23,7 +23,12 @@ GitHub Actions（每日 03:00 台北時間 / push / 後台「立即重建」）
 公告不走建置流程：前台開站時直接向 Worker `/api/db/announcements` 取得，
 在後台存檔後即時生效。
 
+正式 workflow 採 fail-closed：若 `DRIVE_API_KEY` 未設定，該次 workflow 直接失敗，
+GitHub Pages 保留上一個成功 deployment，不會用空索引覆蓋線上資料。
+
 ## 開發
+
+需求：Node.js 20.9 以上；CI 與目前維護環境使用 Node 24。
 
 ```bash
 npm install
@@ -33,7 +38,8 @@ npm run build
 ```
 
 `folders/`、`curriculums/`、`depts.resolved.json`、`public/search-index.json`
-都是建置產物，已 gitignore。
+與 `public/sitemap.xml` 都是建置產物，已 gitignore。sitemap 每次 build 會依當次
+Drive 索引重建；沒有資料時仍包含首頁與課程頁。
 
 系所名稱、Drive 資料夾與上傳表單連結**只有一個來源**：社科院學生會官網後台的
 「社科院資料庫」分頁。程式碼裡沒有任何預設系所清單——後台連不上時 `genIndex`
@@ -47,6 +53,7 @@ npm run build
 | `BASE_PATH` | Pages 子路徑，CI 以 repo 名自動帶入（預設 `/database`） |
 | `API_BASE` | 後端 Worker 位址（預設正式站；repo variable 可覆寫成 staging） |
 | `NEXT_PUBLIC_GA_ID` | GA4 measurement ID，未設定即不掛追蹤 |
+| `NEXT_PUBLIC_SITE_URL` | canonical／Open Graph／sitemap 網址（預設正式 `/database`） |
 
 ## 相關專案
 

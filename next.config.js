@@ -9,6 +9,7 @@ const apiBase = process.env.API_BASE || 'https://ntu-coss-api.ntusssa2.workers.d
 
 // GA4 另開一組，未設定就不掛追蹤（不可沿用經濟資料庫那組）。
 const gaId = process.env.NEXT_PUBLIC_GA_ID || '';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ntu-coss.github.io/database';
 
 const nextConfig = {
     output: 'export',
@@ -18,6 +19,7 @@ const nextConfig = {
         NEXT_PUBLIC_BASE_PATH: basePath,
         NEXT_PUBLIC_API_BASE: apiBase,
         NEXT_PUBLIC_GA_ID: gaId,
+        NEXT_PUBLIC_SITE_URL: siteUrl,
     },
 }
 

@@ -173,6 +173,10 @@ ACCEPT: 本地 `npm run dev` 開首頁能顯示 staging Worker 回的公告；bu
 缺少 posts/ 而失敗。
 
 ### P6 上線
+CURRENT（2026-08-20）：P6a–P6d 程式與設定皆完成；公開 Actions 最近五次全綠，
+`Build Drive index` 有實際執行，正式站已有經濟學系資料。workflow 另改為缺 key
+就 fail-closed，不會部署空站。P6c／P6d 新程式仍需本次變更發布後才上線。
+
 SPEC: 建 GitHub repo `ntu-coss/database`（**先問 Morgan**）→ Settings → Pages
 來源設 GitHub Actions → 加 repo secret `DRIVE_API_KEY`（Morgan 自跑
 `gh secret set DRIVE_API_KEY`）→ push main → 確認 workflow 綠燈。
@@ -188,7 +192,7 @@ ACCEPT: Actions 全綠；PLAN.md 全部打勾；把本專案現況寫進 memory
 
 1. 各系提供 Drive 資料夾並設為「知道連結的人皆可檢視」→ 把 ID 給 agent 或直接
    在後台填。
-2. `gh secret set DRIVE_API_KEY -R ntu-coss/database`（可沿用 db-test 那把）。
-3. `npx wrangler secret put GITHUB_DISPATCH_TOKEN`（P4 用）。
-4. 建 repo ＋ Pages 來源設 GitHub Actions。
-5. 確認站名、系所 code、是否保留「檔案上傳」按鈕（PLAN.md 未決事項）。
+2. [x] `DRIVE_API_KEY` 已設定，正式 Drive index 每日成功。
+3. [x] `GITHUB_DISPATCH_TOKEN` 已可用，正式 `repository_dispatch` 有成功紀錄。
+4. [x] repo、GitHub Actions Pages、站名與系所 code 已完成。
+5. 各系上傳表單連結與新的 GA4 measurement ID 仍可日後補上。

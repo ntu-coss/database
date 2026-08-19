@@ -7,6 +7,7 @@ folders/
 curriculums/
 depts.resolved.json
 public/search-index.json
+public/sitemap.xml
 
 .DS_Store
 *.log

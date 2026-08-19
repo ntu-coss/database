@@ -6,12 +6,13 @@ export default function File() {
     const router = useRouter();
     const { id } = router.query;
     const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
+    const fileId = typeof id === 'string' && /^[A-Za-z0-9_-]+$/.test(id) ? id : '';
+    const invalidId = router.isReady && !fileId;
     return (
         <div>
             <Head>
-                <title>
-                    檔案
-                </title>
+                <title>檔案預覽 | 台大社科院資料庫</title>
+                <meta name="robots" content="noindex,follow" />
                 <link rel="icon" href={`${basePath}/favicon.ico`} />
                 <style>
                     {`
@@ -19,6 +20,7 @@ export default function File() {
                         position: relative;
                         width: 80%;
                         padding-bottom: 100%;
+                        margin: 0 auto;
                     }
                     .responsive-iframe {
                         position: absolute;
@@ -40,17 +42,19 @@ export default function File() {
                 }}>
                     <h2>檔案</h2>
                 </div>
-                <div class="container">
-                    <center>
-                        <div class="iframe-container">
-                            <iframe class="responsive-iframe" src={`https://drive.google.com/file/d/${id}/preview`} allow="autoplay"></iframe>
+                <div className="container text-center">
+                    {!router.isReady ? (
+                        <p className="text-muted">載入中…</p>
+                    ) : invalidId ? (
+                        <p className="alert alert-warning">檔案連結無效，請回到課程頁重新選擇。</p>
+                    ) : (
+                        <div className="iframe-container">
+                            <iframe className="responsive-iframe" title="Google Drive 檔案預覽" src={`https://drive.google.com/file/d/${fileId}/preview`} allow="autoplay"></iframe>
                         </div>
-                    </center>
+                    )}
                 </div>
-                <div class="container">
-                    <center>
-                        <h6>若文件預覽未正常顯示<a href={`https://drive.google.com/file/d/${id}`}>請點擊此處</a></h6>
-                    </center>
+                <div className="container text-center">
+                    {fileId && <h6>若文件預覽未正常顯示<a href={`https://drive.google.com/file/d/${fileId}`} target="_blank" rel="noreferrer">請點擊此處</a></h6>}
                 </div>
             </Layout >
         </div >
