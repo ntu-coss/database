@@ -30,20 +30,23 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
       - run: npm ci
       - run: echo "BASE_PATH=/${GITHUB_REPOSITORY#*/}" >> "$GITHUB_ENV"
+      # 正式站已上線後採 fail-closed：缺 key 就讓本次 workflow 失敗，保留上一個
+      # 成功的 Pages deployment，絕不以空索引覆蓋正式資料。
+      - name: Validate Drive API key
+        run: |
+          if [[ -z "$DRIVE_API_KEY" ]]; then
+            echo "::error::DRIVE_API_KEY 未設定；停止部署以保留上一個成功版本。"
+            exit 1
+          fi
       # 系所清單向後台索取，再逐系遞迴走訪各系 Drive 資料夾。
-      # 還沒設 DRIVE_API_KEY 時整步跳過：網站照樣上線，只是沒有課程資料。
       - name: Build Drive index
-        if: env.DRIVE_API_KEY != ''
         run: node scripts/genIndex.mjs
         env:
           API_BASE: ${{ vars.API_BASE }}
-      - name: Skip Drive index
-        if: env.DRIVE_API_KEY == ''
-        run: echo "::warning::DRIVE_API_KEY 未設定，略過 Drive 索引，本次部署不含課程資料。"
       - run: npm run build
         env:
           API_BASE: ${{ vars.API_BASE }}

@@ -1,5 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Head from 'next/head';
 import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Navbar from './navbar';
 import { GoogleAnalytics } from 'nextjs-google-analytics';
 
@@ -18,6 +20,7 @@ export function getInitialTheme() {
 }
 
 export default function Layout({ children }) {
+    const router = useRouter();
     useEffect(() => {
         applyTheme(getInitialTheme());
 
@@ -34,9 +37,46 @@ export default function Layout({ children }) {
 
     // GA4 為本站專屬的一組，未設定 NEXT_PUBLIC_GA_ID 就不掛追蹤。
     const gaId = process.env.NEXT_PUBLIC_GA_ID;
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    const path = (router.asPath || '/').split('?')[0].split('#')[0];
+    const canonical = `${siteUrl}${path === '/' ? '/' : path}`;
+    const title = '台大社科院資料庫 | NTU COSS Database';
+    const description = '臺大社會科學院學生會建置，整合社科院各系考古題、講義與課程資源。';
+    const image = `${siteUrl}/og-image.png`;
+    const websiteJsonLd = {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: '台大社科院資料庫',
+        alternateName: 'NTU COSS Database',
+        url: `${siteUrl}/`,
+        publisher: {
+            '@type': 'Organization',
+            name: '國立臺灣大學社會科學院學生會',
+            url: 'https://ntu-coss.github.io/',
+        },
+    };
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+            <Head>
+                <meta name="description" content={description} />
+                <link rel="canonical" href={canonical} />
+                <meta property="og:type" content="website" />
+                <meta property="og:site_name" content={title} />
+                <meta property="og:title" content={title} />
+                <meta property="og:description" content={description} />
+                <meta property="og:url" content={canonical} />
+                <meta property="og:image" content={image} />
+                <meta property="og:locale" content="zh_TW" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={title} />
+                <meta name="twitter:description" content={description} />
+                <meta name="twitter:image" content={image} />
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+                />
+            </Head>
             <Navbar />
             {gaId && <GoogleAnalytics gaMeasurementId={gaId} />}
             <div style={{ flex: '1' }}>

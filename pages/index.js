@@ -16,7 +16,10 @@ function useAnnouncements() {
   useEffect(() => {
     let alive = true;
     fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/db/announcements`)
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
       .then((data) => {
         if (!alive) return;
         setState({ status: 'ok', items: Array.isArray(data.items) ? data.items : [] });

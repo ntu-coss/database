@@ -17,12 +17,12 @@ export default function Folder({ folderData, deptCode, deptName }) {
                 <link rel="icon" href={`${basePath}/favicon.ico`} />
             </Head>
             <Layout>
-                <div class="container">
+                <div className="container">
                     <center>
                         <h2>課程資料</h2>
                     </center>
                 </div>
-                <div class="container">
+                <div className="container">
                     <h6>現在位置：
                         <a
                             className="badge bg-secondary me-2 align-items-center text-decoration-none"
@@ -30,14 +30,14 @@ export default function Folder({ folderData, deptCode, deptName }) {
                         >
                             {deptName}
                         </a>
-                        {folderData["route"].split('/').map((c) => (
-                            <span class="badge bg-primary me-2 align-items-center">{c}</span>
+                        {folderData["route"].split('/').map((c, index) => (
+                            <span className="badge bg-primary me-2 align-items-center" key={`${c}-${index}`}>{c}</span>
 
                         ))}
                     </h6>
                 </div>
-                <div class="container">
-                    <ul class="list-group list-group-flush">
+                <div className="container">
+                    <ul className="list-group list-group-flush">
                         <div className="list-group">
                             {childFolders.map((folder) => {
                                 const hasFiles = folder["file_count"] > 0;
@@ -49,16 +49,16 @@ export default function Folder({ folderData, deptCode, deptName }) {
                                     };
                                 return (
                                     <a key={folder["url"]} {...linkProps}>
-                                        <div class="d-flex w-100 justify-content-begin">
-                                            <h5 class="mb-1">{folder["name"]}</h5>
+                                        <div className="d-flex w-100 justify-content-begin">
+                                            <h5 className="mb-1">{folder["name"]}</h5>
                                         </div>
-                                        <div class="d-flex justify-content-end">
+                                        <div className="d-flex justify-content-end">
                                             {hasFiles ? (
-                                                <span class="badge bg-primary me-2 align-items-center">
+                                                <span className="badge bg-primary me-2 align-items-center">
                                                     共有{folder["file_count"]}個檔案
                                                 </span>
                                             ) : (
-                                                <span class="badge bg-secondary me-2 align-items-center">
+                                                <span className="badge bg-secondary me-2 align-items-center">
                                                     本資料夾暫無檔案
                                                 </span>
                                             )}
@@ -71,7 +71,7 @@ export default function Folder({ folderData, deptCode, deptName }) {
                     {childFolders.length > 0 && files.length > 0 && <hr />}
                     <div className="list-group">
                         {files.map((file) => (
-                            <a href={`${basePath}/file?id=${file["url"]}`} className="list-group-item list-group-item-action">{file["name"]}</a>
+                            <a key={file["url"]} href={`${basePath}/file?id=${file["url"]}`} className="list-group-item list-group-item-action">{file["name"]}</a>
                         ))}
                     </div>
                     {childFolders.length === 0 && files.length === 0 && (
