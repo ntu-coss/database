@@ -25,7 +25,7 @@
 | 樣板（只讀） | `~/Documents/Projects/ECON DB/db-test/` |
 | 官網原始碼 | `~/Documents/Projects/ntu-coss/ntu-coss-web/` |
 | Worker 程式 | `ntu-coss-web/worker/src/`（index.js 路由、public.js 公開 API、admin.js 後台 dispatch、sheets.js 表格存取） |
-| 後台 SPA | `ntu-coss-web/public/admin-app.html`（原生 JS，非 React） |
+| 後台 SPA | `ntu-coss-web/public/admin/`（依功能拆分的原生 JS，非 React） |
 | Worker 正式 | `https://ntu-coss-api.ntusssa2.workers.dev` |
 | 新站網址 | `https://ntu-coss.github.io/database/`，basePath `/database` |
 | 經濟系 Drive 根 | `1AFwD9mjlh4pyYg7T9ggkU6HH0AmORuSy`（已公開） |
@@ -46,6 +46,8 @@
   不走服務帳號。
 - 公告＝**前台即時 fetch Worker**；系所設定＝**build 時讀取**，改動後由後台
   「立即重建」按鈕觸發 `repository_dispatch`。
+- 課程顯示預設 `all`；只有 `courseMode=allowlist` 時，建置才把 Drive 第一層課程
+  與 `courseAllowlist` 取交集。空白名單代表該系不顯示任何課程。
 - 索引檔命名 `<dept>__<code>`（如 `econ__01.json`），沿用現有
   `/folder/[cid]/[fid]` 路由，不新增路由層級。
 - 後台權限 key ＝ `db`。
@@ -113,7 +115,7 @@ ACCEPT: 以 `DRIVE_API_KEY=… node scripts/genIndex.mjs`（Morgan 自跑）產�
 GOAL: 官網 Worker 提供資料庫站需要的公開 API 與後台操作。
 SPEC（改 `ntu-coss-web/worker/src/`）：
 - 新 sheet 兩張，用 `sheets.ensureSheet()` 建：
-  - `DBDepts`: `id,code,name,folderId,uploadUrl,order,enabled`
+  - `DBDepts`: `id,code,name,folderId,uploadUrl,order,enabled,courseMode,courseAllowlist`
   - `DBPosts`: `id,title,content,pinned,published,publishFrom,publishUntil,createdAt,author`
 - `public.js` 新增 `getDbConfig(sheets)`、`getDbAnnouncements(sheets)`；
   公告的上下架/置頂邏輯直接沿用現有公告那套（`publishWindowOk`、
@@ -125,12 +127,11 @@ SPEC（改 `ntu-coss-web/worker/src/`）：
   Drive 網址轉成純 ID。
 - 注意 Google Sheets 會把 'true'/'false' 轉成布林：寫入用 RAW、讀取用
   FORMATTED_VALUE、比較前正規化成字串（既有 helper 已處理，照抄用法）。
-- `admin.js` 檔案含奇怪位元組，grep 一律加 `-a`。
 ACCEPT: `wrangler deploy --env staging` 成功；staging 後台可呼叫新 action；
 `/api/db/config` 回傳 depts 陣列。**先不要部署正式**。
 
 ### P3 後台 UI
-GOAL: `admin-app.html` 新增「社科院資料庫」分頁。
+GOAL: `public/admin/` 新增「社科院資料庫」分頁。
 SPEC:
 - 側欄按鈕 ＋ tab pane `#t-db`；卡片列表加一張（`page: 'db'`，自選 icon/色）。
 - `PAGE_LABELS` 加 `db: '社科院資料庫'`；`PERM_PAGES` 陣列加 `'db'`。

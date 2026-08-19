@@ -17,6 +17,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { filterCoursesByPolicy, normalizeCoursePolicy } from './courseVisibility.mjs';
 
 // trim：secret 常在複製貼上時帶到換行或空白，Google 會回 400 API key not valid
 const API_KEY = (process.env.DRIVE_API_KEY || '').trim();
@@ -206,6 +207,8 @@ function normalizeDepts(list) {
             order: Number(d.order) || 0,
             // Google Sheets 會把 'true'/'false' 存成字串或布林，兩種都要吃。
             enabled: String(d.enabled) !== 'false',
+            // 預設 all 維持既有行為；只有後台明確開啟 allowlist 才進行過濾。
+            ...normalizeCoursePolicy(d),
         }))
         .filter((d) => d.code && d.enabled)
         .sort((a, b) => a.order - b.order);
@@ -248,8 +251,13 @@ function resetDir(dir, ext) {
 async function indexDept(dept) {
     console.log(`\n[${dept.code}] ${dept.name}: fetching course list...`);
     const rootChildren = await listChildren(dept.folderId);
-    const courseFolders = rootChildren.filter((f) => f.mimeType === FOLDER_MIME);
-    console.log(`[${dept.code}] found ${courseFolders.length} course folders.`);
+    const discoveredCourses = rootChildren.filter((f) => f.mimeType === FOLDER_MIME);
+    const courseFolders = filterCoursesByPolicy(discoveredCourses, dept);
+    const hiddenCount = discoveredCourses.length - courseFolders.length;
+    console.log(
+        `[${dept.code}] found ${discoveredCourses.length} course folders; ` +
+        `${courseFolders.length} visible${hiddenCount ? `, ${hiddenCount} hidden by allowlist` : ''}.`
+    );
 
     let deptFiles = 0;
 

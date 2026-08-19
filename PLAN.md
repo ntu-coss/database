@@ -1,7 +1,7 @@
 # 社會科學院資料庫（COSS Database）— 計畫書
 
 給 Morgan 看的版本。Agent 執行用的工作單在同目錄 `AGENT.md`。
-最後更新：2026-08-12。
+最後更新：2026-08-20。
 
 ## 一句話
 
@@ -16,7 +16,7 @@
 | 線上網址 | `https://ntu-coss.github.io/database/`（basePath `/database`） |
 | 本機 | `~/Documents/Projects/ntu-coss/coss-db/`（就是這個資料夾，直接 git init） |
 | 後端 | 沿用現有 Worker `ntu-coss-api`，新增 `/api/db/*` |
-| 後台 | 沿用 `ntu-coss-web/public/admin-app.html`，新增「社科院資料庫」分頁 |
+| 後台 | `ntu-coss-web/public/admin/` 的「社科院資料庫」分頁 |
 
 **不會動到**：`ntu-econ` 的三個 repo、`db-test`、社科院學生會官網現有功能。
 資料庫站與官網同一個 host（`ntu-coss.github.io`），所以 **CORS 不用改**。
@@ -80,6 +80,8 @@ Drive 資料夾 ID 與各系上傳表單連結**一律在後台填**，程式碼
   → 上傳表單各系一份，前台按「檔案上傳」時依目前選的系分流；**未填連結的系
   就不顯示上傳鈕**（初期全部留空＝上傳鈕隱藏）。
 - **公告**：標題 / Markdown 內容 / 發布時間 / 置頂 / 上下架。存檔即時生效。
+- **課程顯示**：每系可維持全部顯示，或切成白名單，只索引勾選的 Drive 第一層
+  課程資料夾；教師要求下架時取消勾選並重建即可。
 - 權限 key 為 `db`，可只授權學術部的人，不影響場地/院櫃等既有權限。
 
 ## 落地順序（進度勾選以本表為準）
@@ -98,6 +100,7 @@ Drive 資料夾 ID 與各系上傳表單連結**一律在後台填**，程式碼
 - [x] **P6b** `DRIVE_API_KEY` 已設定；2026-08-20 核對最近五次 workflow 全綠，
       `Build Drive index` 確實執行，正式站已有經濟學系資料
 - [x] **P6c** 官網 navbar 加「資料庫」連結（2026-08-20 程式完成，隨官網下一次部署上線）
+- [x] **P7** 課程顯示白名單：Worker 設定欄位、後台 Drive 掃描／勾選 UI、建置時過濾
 - [x] **P6d** SEO：動態 sitemap、robots、canonical／OG／JSON-LD、社科院 favicon 與 1200×630 分享圖
 
 P0–P1 做完就能看到成品（系所清單先寫死）；P2 之後才需要動到官網後端。
