@@ -2,11 +2,13 @@
   "name": "ntu-coss-database",
   "private": true,
   "scripts": {
-    "prebuild": "node scripts/genSearchIndex.mjs && node scripts/genSitemap.mjs",
+    "prebuild": "bash scripts/write-version.sh && node scripts/genSearchIndex.mjs && node scripts/genSitemap.mjs",
+    "predev": "bash scripts/write-version.sh",
     "build": "next build",
     "dev": "next dev",
     "start": "next start",
-    "index": "node scripts/genIndex.mjs"
+    "index": "node scripts/genIndex.mjs",
+    "test": "node --test scripts/*.test.mjs"
   },
   "dependencies": {
     "@next/third-parties": "^16.3.1",
