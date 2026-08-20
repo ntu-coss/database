@@ -28,6 +28,8 @@ jobs:
       DRIVE_API_KEY: ${{ secrets.DRIVE_API_KEY }}
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0 # 版號使用完整 commit 數，不能只抓最後一筆
       - uses: actions/setup-node@v5
         with:
           node-version: 24

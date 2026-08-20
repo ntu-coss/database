@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Navbar from './navbar';
 import { GoogleAnalytics } from 'nextjs-google-analytics';
+import buildInfo from '../public/version.json';
 
 // Applies the given theme ('light' | 'dark') to <html data-bs-theme>.
 export function applyTheme(theme) {
@@ -93,7 +94,7 @@ export default function Layout({ children }) {
                     <div>
                         <span className="text-muted">© 2026 臺大社會科學院學生會</span>
                         <br />
-                        <span className="text-muted">Ver: 1.0(20260812)</span>
+                        <span className="text-muted" title={`Commit ${buildInfo.commit}`}>Ver: {buildInfo.display}</span>
                     </div>
                     <div>
                         <span className="text-muted">
