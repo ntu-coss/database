@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
 import { applyTheme, getInitialTheme } from './layout';
+import { matchesSearchEntry } from '../lib/search.mjs';
 
 const SEARCH_RESULT_LIMIT = 50;
 
@@ -85,20 +86,79 @@ export default function Navbar() {
 
     let matches = [];
     if (isSearching && searchIndex) {
-        const needle = trimmedQuery.toLowerCase();
-        matches = searchIndex.filter(
-            (entry) =>
-                (entry.n && entry.n.toLowerCase().includes(needle)) ||
-                (entry.r && entry.r.toLowerCase().includes(needle))
-        );
+        matches = searchIndex
+            .filter((entry) => matchesSearchEntry(entry, trimmedQuery))
+            .sort((a, b) => {
+                const kindOrder = (a.k === 'course' ? 0 : 1) - (b.k === 'course' ? 0 : 1);
+                return kindOrder || String(a.n).localeCompare(String(b.n), 'zh-Hant');
+            });
     }
     const truncated = matches.length > SEARCH_RESULT_LIMIT;
     const visibleMatches = truncated ? matches.slice(0, SEARCH_RESULT_LIMIT) : matches;
 
+    const renderSearch = (mobile) => (
+        <div
+            className={`position-relative w-100 ${mobile ? 'd-xl-none mt-2' : 'd-none d-xl-block me-xl-2'}`}
+            style={mobile ? undefined : { maxWidth: '24rem' }}
+        >
+            <form className="d-flex" role="search" onSubmit={(e) => e.preventDefault()}>
+                <input
+                    type="search"
+                    className="form-control"
+                    placeholder="搜尋課程或檔案…"
+                    value={query}
+                    onChange={handleQueryChange}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                    onKeyDown={handleKeyDown}
+                    aria-label="搜尋課程或檔案"
+                />
+            </form>
+            {resultsOpen && isSearching && (
+                <div
+                    className="dropdown-menu show w-100 p-0 shadow-sm"
+                    style={{ maxHeight: '60vh', overflow: 'auto', zIndex: 1050 }}
+                >
+                    {!searchIndex ? (
+                        <span className="dropdown-item-text text-muted">搜尋中…</span>
+                    ) : visibleMatches.length === 0 ? (
+                        <span className="dropdown-item-text text-muted">找不到符合的課程或檔案</span>
+                    ) : (
+                        <>
+                            {visibleMatches.map((entry, idx) => {
+                                const isCourse = entry.k === 'course';
+                                const href = isCourse ? `${basePath}${entry.u}` : `${basePath}/file?id=${entry.i}`;
+                                return (
+                                    <a
+                                        key={`${isCourse ? entry.u : entry.i}-${idx}`}
+                                        href={href}
+                                        className="dropdown-item py-2"
+                                        style={{ whiteSpace: 'normal' }}
+                                    >
+                                        <div className="d-flex align-items-center gap-2">
+                                            <span className={`badge ${isCourse ? 'text-bg-success' : 'text-bg-secondary'}`}>
+                                                {isCourse ? '課程' : '檔案'}
+                                            </span>
+                                            <span>{entry.n}</span>
+                                        </div>
+                                        <small className="text-muted d-block mt-1">{entry.r}</small>
+                                    </a>
+                                );
+                            })}
+                            {truncated && (
+                                <span className="dropdown-item-text text-muted small">顯示前 50 筆…</span>
+                            )}
+                        </>
+                    )}
+                </div>
+            )}
+        </div>
+    );
+
     return (
         <div>
             <nav className="navbar navbar-expand-xl bg-body-tertiary">
-                <div className="container-fluid">
+                <div className="container-fluid flex-wrap">
                     <a className="navbar-brand" href={`${basePath}`}>
                         臺大社科資料庫
                     </a>
@@ -117,6 +177,7 @@ export default function Navbar() {
                     >
                         <span className="navbar-toggler-icon"></span>
                     </button>
+                    {renderSearch(true)}
                     <div className="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul className="navbar-nav me-auto mb-2 mb-xl-0">
                             <li className="nav-item">
@@ -131,49 +192,7 @@ export default function Navbar() {
                             </li>
                         </ul>
                         <hr className="d-xl-none my-2" />
-                        <div className="position-relative me-xl-2 mb-2 mb-xl-0 w-100" style={{ maxWidth: '20rem' }}>
-                            <form className="d-flex" role="search" onSubmit={(e) => e.preventDefault()}>
-                                <input
-                                    type="search"
-                                    className="form-control"
-                                    placeholder="搜尋檔案名稱…"
-                                    value={query}
-                                    onChange={handleQueryChange}
-                                    onFocus={handleFocus}
-                                    onBlur={handleBlur}
-                                    onKeyDown={handleKeyDown}
-                                    aria-label="搜尋檔案名稱"
-                                />
-                            </form>
-                            {resultsOpen && isSearching && (
-                                <div
-                                    className="dropdown-menu show w-100 p-0"
-                                    style={{ maxHeight: '60vh', overflow: 'auto' }}
-                                >
-                                    {!searchIndex ? (
-                                        <span className="dropdown-item-text text-muted">搜尋中…</span>
-                                    ) : visibleMatches.length === 0 ? (
-                                        <span className="dropdown-item-text text-muted">找不到符合的檔案</span>
-                                    ) : (
-                                        <>
-                                            {visibleMatches.map((entry, idx) => (
-                                                <a
-                                                    key={`${entry.i}-${idx}`}
-                                                    href={`${basePath}/file?id=${entry.i}`}
-                                                    className="dropdown-item"
-                                                >
-                                                    <div>{entry.n}</div>
-                                                    <small className="text-muted">{entry.r}</small>
-                                                </a>
-                                            ))}
-                                            {truncated && (
-                                                <span className="dropdown-item-text text-muted small">顯示前 50 筆…</span>
-                                            )}
-                                        </>
-                                    )}
-                                </div>
-                            )}
-                        </div>
+                        {renderSearch(false)}
                         {/* 上傳鈕跟著「目前看的是哪個系」，所以放在課程頁的系所切換旁邊 */}
                         <div className="d-flex align-items-center ms-xl-2">
                             <span className="d-xl-none text-muted small me-2">深色模式</span>

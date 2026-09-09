@@ -4,6 +4,7 @@ import Layout from '../components/layout';
 import { getSortedPostsData } from '../lib/curriculum';
 import { getPublicDepts } from '../lib/depts';
 import { rememberDept, resolveDept } from '../lib/deptSelection';
+import { displayName } from '../lib/displayName.mjs';
 
 export async function getStaticProps() {
     return {
@@ -33,6 +34,7 @@ export default function Curriculum({ depts, courses }) {
 
     const currentDept = depts.find((d) => d.code === dept);
     const list = courses.filter((c) => c.dept === dept);
+    const uploadOpen = list.some((c) => c.uploadEnabled === true || String(c.uploadEnabled) === 'true');
 
     return (
         <div>
@@ -55,8 +57,8 @@ export default function Curriculum({ depts, courses }) {
                             </li>
                         ))}
                     </ul>
-                    {/* 上傳表單各系一份，後台沒填就不顯示 */}
-                    {currentDept && currentDept.uploadUrl && (
+                    {/* 四系可共用同一份表單網址；未設定或沒有開放上傳課程就不顯示。 */}
+                    {currentDept && currentDept.uploadUrl && uploadOpen && (
                         <p className="text-center">
                             <a className="btn btn-outline-success btn-sm" href={currentDept.uploadUrl} target="_blank" rel="noreferrer">
                                 上傳{currentDept.name}檔案
@@ -73,7 +75,7 @@ export default function Curriculum({ depts, courses }) {
                         </p>
                     ) : (
                         <div className="list-group">
-                            {list.map(({ id, fcnt, title, fid, updated }) => {
+                            {list.map(({ id, fcnt, title, fid, updated, uploadEnabled }) => {
                                 const hasFiles = fcnt > 0;
                                 const linkProps = hasFiles
                                     ? { href: `${basePath}/folder/${id}/${fid}`, className: "list-group-item list-group-item-action" }
@@ -84,9 +86,12 @@ export default function Curriculum({ depts, courses }) {
                                 return (
                                     <a key={id} {...linkProps}>
                                         <div className="d-flex w-100 justify-content-begin">
-                                            <h5 className="mb-1">{title}</h5>
+                                            <h5 className="mb-1">{displayName(title, dept)}</h5>
                                         </div>
                                         <div className="d-flex flex-column align-items-end">
+                                            {(uploadEnabled === true || String(uploadEnabled) === 'true') && (
+                                                <span className="badge bg-success me-2 mb-1">開放上傳</span>
+                                            )}
                                             {updated && (
                                                 <small className="text-muted me-2">{updated}</small>
                                             )}

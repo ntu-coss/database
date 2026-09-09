@@ -3,6 +3,7 @@ import Layout from '../../../components/layout';
 import { useRouter } from 'next/router';
 import { getAllFolders, getFoldersData } from '../../../lib/folder';
 import { getPublicDepts } from '../../../lib/depts';
+import { displayName } from '../../../lib/displayName.mjs';
 
 export default function Folder({ folderData, deptCode, deptName }) {
     const childFolders = folderData["folder"].sort((a, b) => a.name.localeCompare(b.name));
@@ -31,7 +32,7 @@ export default function Folder({ folderData, deptCode, deptName }) {
                             {deptName}
                         </a>
                         {folderData["route"].split('/').map((c, index) => (
-                            <span className="badge bg-primary me-2 align-items-center" key={`${c}-${index}`}>{c}</span>
+                            <span className="badge bg-primary me-2 align-items-center" key={`${c}-${index}`}>{displayName(c, deptCode)}</span>
 
                         ))}
                     </h6>
@@ -50,7 +51,7 @@ export default function Folder({ folderData, deptCode, deptName }) {
                                 return (
                                     <a key={folder["url"]} {...linkProps}>
                                         <div className="d-flex w-100 justify-content-begin">
-                                            <h5 className="mb-1">{folder["name"]}</h5>
+                                            <h5 className="mb-1">{displayName(folder["name"], deptCode)}</h5>
                                         </div>
                                         <div className="d-flex justify-content-end">
                                             {hasFiles ? (

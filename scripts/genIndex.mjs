@@ -17,6 +17,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { courseIdentity } from '../lib/courseIdentity.mjs';
 import { filterCoursesByPolicy, normalizeCoursePolicy } from './courseVisibility.mjs';
 
 // trim：secret 常在複製貼上時帶到換行或空白，Google 會回 400 API key not valid
@@ -209,6 +210,9 @@ function normalizeDepts(list) {
             enabled: String(d.enabled) !== 'false',
             // 預設 all 維持既有行為；只有後台明確開啟 allowlist 才進行過濾。
             ...normalizeCoursePolicy(d),
+            uploadCourseAllowlist: Array.isArray(d.uploadCourseAllowlist)
+                ? d.uploadCourseAllowlist.map((id) => String(id).trim()).filter(Boolean)
+                : [],
         }))
         .filter((d) => d.code && d.enabled)
         .sort((a, b) => a.order - b.order);
@@ -262,9 +266,9 @@ async function indexDept(dept) {
     let deptFiles = 0;
 
     for (const course of courseFolders) {
-        const code = course.name.slice(0, 2);
-        const title = course.name.slice(2);
+        const { code, title } = courseIdentity(course);
         const id = `${dept.code}__${code}`;
+        const uploadEnabled = dept.uploadCourseAllowlist.includes(course.id);
 
         const db = {};
         const { fileCount, maxModifiedTime } = await walk(course.id, course.name, db);
@@ -288,6 +292,7 @@ async function indexDept(dept) {
             `fid: ${course.id}`,
             `dept: ${dept.code}`,
             `deptName: ${dept.name}`,
+            `uploadEnabled: ${uploadEnabled ? 'true' : 'false'}`,
             `updated: "${updated}"`, // 加引號:避免 YAML 解析成 Date 物件(getStaticProps 無法序列化)
             '---',
             `更新日期：${updated}`,
