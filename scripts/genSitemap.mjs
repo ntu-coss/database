@@ -8,7 +8,7 @@ const foldersDir = path.join(root, 'folders');
 const outputPath = path.join(root, 'public', 'sitemap.xml');
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://ntu-coss.github.io/database').replace(/\/$/, '');
 
-const urls = new Set([`${siteUrl}/`, `${siteUrl}/curriculum`]);
+const urls = new Set([`${siteUrl}/`, `${siteUrl}/curriculum`, `${siteUrl}/announcement`]);
 
 if (fs.existsSync(foldersDir) && fs.statSync(foldersDir).isDirectory()) {
   for (const fileName of fs.readdirSync(foldersDir).filter(name => name.endsWith('.json'))) {

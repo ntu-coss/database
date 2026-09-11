@@ -1,8 +1,7 @@
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import Layout from '../components/layout';
+import { announcementPreview, announcementTitle, fetchAnnouncements } from '../lib/announcements.mjs';
 import { getPublicDepts } from '../lib/depts';
 import { rememberDept } from '../lib/deptSelection';
 
@@ -15,14 +14,10 @@ function useAnnouncements() {
   const [state, setState] = useState({ status: 'loading', items: [] });
   useEffect(() => {
     let alive = true;
-    fetch(`${process.env.NEXT_PUBLIC_API_BASE}/api/db/announcements`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
+    fetchAnnouncements(process.env.NEXT_PUBLIC_API_BASE)
+      .then((items) => {
         if (!alive) return;
-        setState({ status: 'ok', items: Array.isArray(data.items) ? data.items : [] });
+        setState({ status: 'ok', items });
       })
       .catch(() => alive && setState({ status: 'error', items: [] }));
     return () => { alive = false; };
@@ -31,7 +26,7 @@ function useAnnouncements() {
 }
 
 export default function Home({ depts }) {
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
   const { status, items } = useAnnouncements();
 
   return (
@@ -80,20 +75,22 @@ export default function Home({ depts }) {
           ) : (
             <div className="list-group">
               {items.map((post) => (
-                <div className="list-group-item" key={post.id}>
+                <a
+                  className="list-group-item list-group-item-action"
+                  href={`${basePath}/announcement?id=${encodeURIComponent(post.id)}`}
+                  key={post.id}
+                >
                   <div className="d-flex w-100 justify-content-between">
                     <h5 className="mb-1">
                       {String(post.pinned) === 'true' && (
                         <span className="badge bg-danger me-2">置頂</span>
                       )}
-                      {post.title}
+                      {announcementTitle(post)}
                     </h5>
                     <small className="text-muted text-nowrap ms-2">{post.publishFrom || post.createdAt}</small>
                   </div>
-                  <div className="mt-2">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{post.content || ''}</ReactMarkdown>
-                  </div>
-                </div>
+                  {announcementPreview(post) && <p className="mb-1 text-muted text-truncate">{announcementPreview(post)}</p>}
+                </a>
               ))}
             </div>
           )}

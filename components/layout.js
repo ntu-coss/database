@@ -93,6 +93,8 @@ export default function Layout({ children }) {
                 <div className="container d-flex justify-content-between" style={{ fontSize: '0.9rem' }}>
                     <div>
                         <span className="text-muted">© 2026 臺大社會科學院學生會</span>
+                        <span className="mx-2 text-muted">·</span>
+                        <a href="/updates" className="text-decoration-none">更新紀錄</a>
                         <br />
                         <span className="text-muted" title={`Commit ${buildInfo.commit}`}>Ver: {buildInfo.display}</span>
                     </div>
